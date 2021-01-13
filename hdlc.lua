@@ -11,7 +11,7 @@
 -- Contact:  matousp@fit.vutbr.cz
 --
 -- declare the protocol
-hdlc_proto = Proto("HDLC", "HDLC over TCP")
+hdlc_proto = Proto("HDLC", "HDLC")
 
 -- declare the value strings
 local FrameFormatTypeVALS = {
@@ -79,109 +79,167 @@ hdlc_proto.fields = {flag, frameFormat, frameType, segmentationFlag, frameLen, d
 -- create the dissection function
 function hdlc_proto.dissector(buffer, pinfo, tree)
 
-    -- Set the protocol column
+	-- Set the protocol column
 
-    -- create the HDLC protocol tree item
-    local t_hdlc = tree:add(hdlc_proto, buffer())
-    local offset = 0
-    local frame_len = 0
-    local information_len = 0
-    local hdlc_flag = buffer(offset,1):uint()
+	-- create the HDLC protocol tree item
+	local t_hdlc = tree:add(hdlc_proto, buffer())
+	local offset = 0
+	local frame_len = 0
+	local information_len = 0
+	local hdlc_flag = buffer(offset,1):uint()
 
-    if hdlc_flag == 0x7e then  -- it is a HDLC frame
-       t_hdlc:add(flag, buffer(offset,1))
-       
-       local t_frameFormat = t_hdlc:add(frameFormat,buffer(offset + 1, 2))
-       t_frameFormat:add(frameType,buffer(offset+1,2))
-       t_frameFormat:add(segmentationFlag,buffer(offset+1,2))
-       t_frameFormat:add(frameLen,buffer(offset+1,2))
-       
-       t_hdlc:add(dstAddress, buffer(offset + 3, 1))
-       t_hdlc:add(srcAddress, buffer(offset + 4, 1))
-       
-       local srcAdd = buffer(offset+3,1):uint()
-       local dstAdd = buffer(offset+4,1):uint()
-       
-       -- moving offset to the control field
-       local t_ctrlField = t_hdlc:add(ctrlField, buffer(offset+5, 1))
-       
-       local frameCode = buffer:range(5,1)
-       local FrameBits = frameCode:bitfield(6,2)
-       
-       -- iFrames structure
-       if FrameBits == 0 or FrameBits == 2 then
-	  t_ctrlField:add(RecvNumber, buffer(offset+5,1))
-	  t_ctrlField:add(Polling, buffer(offset+5,1))
-	  t_ctrlField:add(SentNumber, buffer(offset+5,1))
-	  t_ctrlField:add(iFrameType, buffer(offset+5,1))
-	  local recv = frameCode:bitfield(0,3)
-	  local sent = frameCode:bitfield(4,3)
+	if hdlc_flag == 0x7e then  -- it is a HDLC frame
+    
+		pinfo.cols['protocol'] = "HDLC"
 
-	  -- the length of the frame including opening and closing flags
-	  frame_len = buffer:len()
-	  -- the length of the information field
-	  information_len = frame_len-9 
+		t_hdlc:add(flag, buffer(offset,1))
 
-	  offset = offset + 6  -- move to the HCS or FCS field
+		local t_frameFormat = t_hdlc:add(frameFormat,buffer(offset+1, 2))
+		t_frameFormat:add(frameType,buffer(offset+1,2))
+		t_frameFormat:add(segmentationFlag,buffer(offset+1,2))
+		t_frameFormat:add(frameLen,buffer(offset+1,2))
 
-	  if information_len > 0 then  -- there is a non-empty information field
-	     -- HCS field
-	     t_hdlc:add(HCS, buffer(offset, 2))
-	     information_len = information_len - 2   -- length without HCS field
-	     local destSAP = buffer(offset+2,1):uint()
-	     offset = offset + 2
-	     if destSAP == 0xe6 then -- testing header LLC presence
-		
-		local t_LLC_frame = t_hdlc:add(buffer(offset,information_len),"Information")
-		t_LLC_frame:add(LLC_dstSAP,buffer(offset,1))
-		t_LLC_frame:add(LLC_srcSAP,buffer(offset+1,1))
-		
-		t_LLC_frame:add(LLC_control,buffer(offset+2,1))
-		t_LLC_frame:add(LLC_data, buffer(offset+3, information_len-3))
-		
-		local new_buffer = buffer(offset+3,information_len-3)
-		
-		local dissector = Dissector.get("dlms")
-		dissector:call(new_buffer:tvb(),pinfo,tree)
-		
-		offset = offset + information_len
-		
-		pinfo.cols['protocol'] = "DLMS"
-	     else -- no LLC header present but non-empty data field
-		information_len = information_len 
-		local dataLen = "Data ("..information_len.." bytes)"
-		t_hdlc:add(buffer(offset,information_len),dataLen)
-		pinfo.cols['protocol'] = "HDLC over TCP"
-		pinfo.cols['info'] = "HDLC segmented data ("..information_len.." bytes)"
-		offset = offset + information_len
-	     end
-	  else -- I-frame has an empty information field
-		pinfo.cols['protocol'] = "HDLC over TCP"
-		pinfo.cols['info'] = FrameTypeVALS[0]..", From "..srcAdd.." -> "..dstAdd..", no data"
-	  end
-       end
+		local srcAdd = buffer(offset+3,1):uint()
+		if( (bit.band(srcAdd,1)) == 0) then
+			srcAdd = buffer(offset+3,2):uint()
+			t_hdlc:add(dstAddress, buffer(offset+3,2))
+			offset = offset + 5
+		else
+			t_hdlc:add(dstAddress, buffer(offset+3,1))
+			offset = offset + 4
+		end
 
-       -- sFrames struture
-       if FrameBits == 1 then
-	  t_ctrlField:add(RecvNumber, buffer(offset+5,1))
-	  t_ctrlField:add(Polling, buffer(offset+5,1))
-	  t_ctrlField:add(sFrameType, buffer(offset+5,1))
-	  t_ctrlField:add(sFrame, buffer(offset+5,1))
-	  local recv = frameCode:bitfield(0,3)
-	  local sType = frameCode:bitfield(5,2)
-	  
-	  pinfo.cols['protocol'] = "HDLC over TCP"
-	  pinfo.cols['info'] = FrameTypeVALS[1]..", From "..srcAdd.." -> "..dstAdd..", "..sFrameTypeVALS[sType]..": N(R)="..recv
-	  offset = offset + 6
-       end
+		local dstAdd = buffer(offset,1):uint()
+		if( (bit.band(dstAdd,1)) == 0) then
+			dstAdd = buffer(offset,2):uint()
+			t_hdlc:add(srcAddress, buffer(offset,2))
+			offset = offset + 2
+		else
+			t_hdlc:add(srcAddress, buffer(offset,1))
+			offset = offset + 1
+		end
 
-       t_hdlc:add(FCS, buffer(offset,2))
-       t_hdlc:add(flag, buffer(offset+2,1))
-    end
+		-- moving offset to the control field
+		local t_ctrlField = t_hdlc:add(ctrlField, buffer(offset, 1))
+
+		local frameCode = buffer:range(offset,1)
+		local FrameBits = frameCode:bitfield(6,2)
+
+		-- iFrames structure
+		if FrameBits == 0 or FrameBits == 2 then
+			t_ctrlField:add(RecvNumber, buffer(offset,1))
+			t_ctrlField:add(Polling, buffer(offset,1))
+			t_ctrlField:add(SentNumber, buffer(offset,1))
+			t_ctrlField:add(iFrameType, buffer(offset,1))
+			local recv = frameCode:bitfield(0,3)
+			local sent = frameCode:bitfield(4,3)
+
+			-- the length of the frame including opening and closing flags
+			frame_len = buffer:len()
+			-- the length of the information field
+			information_len = frame_len-4-offset 
+
+			offset = offset + 1  -- move to the HCS or FCS field
+
+			if information_len > 0 then  -- there is a non-empty information field
+				-- HCS field
+				t_hdlc:add(HCS, buffer(offset, 2))
+				information_len = information_len - 2   -- length without HCS field
+				local destSAP = buffer(offset+2,1):uint()
+				offset = offset + 2
+				if destSAP == 0xe6 then -- testing header LLC presence
+
+					local t_LLC_frame = t_hdlc:add(buffer(offset,information_len),"Information")
+					t_LLC_frame:add(LLC_dstSAP,buffer(offset,1))
+					t_LLC_frame:add(LLC_srcSAP,buffer(offset+1,1))
+
+					t_LLC_frame:add(LLC_control,buffer(offset+2,1))
+					t_LLC_frame:add(LLC_data, buffer(offset+3, information_len-3))
+
+					local new_buffer = buffer(offset+3,information_len-3)
+
+					local dissector = Dissector.get("dlms")
+					dissector:call(new_buffer:tvb(),pinfo,tree)
+
+					offset = offset + information_len
+
+					pinfo.cols['protocol'] = "DLMS"
+				else -- no LLC header present but non-empty data field
+					information_len = information_len 
+					local dataLen = "Data ("..information_len.." bytes)"
+					t_hdlc:add(buffer(offset,information_len),dataLen)
+					pinfo.cols['protocol'] = "HDLC"
+					pinfo.cols['info'] = "HDLC segmented data ("..information_len.." bytes)"
+					offset = offset + information_len
+				end
+			else -- I-frame has an empty information field
+				pinfo.cols['protocol'] = "HDLC"
+				pinfo.cols['info'] = FrameTypeVALS[0]..", From "..srcAdd.." -> "..dstAdd..", no data"
+			end
+		end
+
+		-- sFrames struture
+		if FrameBits == 1 then
+			t_ctrlField:add(RecvNumber, buffer(offset,1))
+			t_ctrlField:add(Polling, buffer(offset,1))
+			t_ctrlField:add(sFrameType, buffer(offset,1))
+			t_ctrlField:add(sFrame, buffer(offset,1))
+			local recv = frameCode:bitfield(0,3)
+			local sType = frameCode:bitfield(5,2)
+
+			pinfo.cols['protocol'] = "HDLC"
+			pinfo.cols['info'] = FrameTypeVALS[1]..", From "..srcAdd.." -> "..dstAdd..", "..sFrameTypeVALS[sType]..": N(R)="..recv
+			offset = offset + 1
+		end
+
+		if FrameBits == 3 then
+			t_ctrlField:add(Polling, buffer(offset,1))
+			local rrr = frameCode:bitfield(0,3)
+			local sss = frameCode:bitfield(4,3)
+
+			pinfo.cols['protocol'] = "HDLC"
+
+			if rrr == 4 and sss == 1 then
+				pinfo.cols['info'] = "SNRM"
+			elseif rrr == 2 and sss == 1 then
+				pinfo.cols['info'] = "DISC"
+			elseif rrr == 3 and sss == 1 then
+				pinfo.cols['info'] = "UA"
+			elseif rrr == 0 and sss == 7 then
+				pinfo.cols['info'] = "DM"
+			elseif rrr == 4 and sss == 3 then
+				pinfo.cols['info'] = "FRMR"
+			elseif rrr == 0 and sss == 1 then
+				pinfo.cols['info'] = "UI"
+			else
+				pinfo.cols['info'] = "Invalid control field RRR -> "..rrr..", SSS -> "..sss
+			end
+
+			-- the length of the frame including opening and closing flags
+			frame_len = buffer:len()
+			-- the length of the information field
+			information_len = frame_len-4-offset 
+
+			offset = offset + 1  -- move to the HCS or FCS field
+
+			if information_len > 0 then  -- there is a non-empty information field
+				-- HCS field
+				t_hdlc:add(HCS, buffer(offset, 2))
+				information_len = information_len - 2   -- length without HCS field
+
+				local dataLen = "Data ("..information_len.." bytes)"
+				t_hdlc:add(buffer(offset+2,information_len),dataLen)
+				offset = offset + information_len + 2
+			end
+		end
+
+		t_hdlc:add(FCS, buffer(offset,2))
+		t_hdlc:add(flag, buffer(offset+2,1))
+	end
 end
 
 -- load the tcp port table
-tcp_table = DissectorTable.get("tcp.port")
--- register the protocol to port 4061 and 4060
-tcp_table:add(4061, hdlc_proto)
-tcp_table:add(4060, hdlc_proto)
+udp_table = DissectorTable.get("udp.port")
+-- register the protocol to port 4059
+
+udp_table:add(4059, hdlc_proto)
