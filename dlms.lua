@@ -17,6 +17,7 @@ dlms_proto = Proto("DLMS","DLMS/COSEM")
 
 -- declare the value strings
 local COSEMpdu = {
+   [0x0F] = "DataNotification",
    [0x60] = "AARQ Association Request",
    [0x61] = "AARE Association Response",
    [0x62] = "AARL Release Request",
@@ -624,6 +625,12 @@ function dlms_proto.dissector(buffer, pinfo, tree)
 	     end
 	  end
        end
+    end
+
+    -- processing DLMS.DataNotification
+    if dlms_type == 0x0f then
+       t_dlms:add(Response_invoke_id,buffer(offset+1,4))
+       pinfo.cols['info'] = "DataNotification"
     end
 end
 
