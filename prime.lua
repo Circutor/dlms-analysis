@@ -33,11 +33,11 @@ local DOType = {
 
 -- Generic MAC Header fields
 local HDR          = ProtoField.bytes("prime.hdr","Generic MAC Header")
-local HDR_UNUSED   = ProtoField.uint8("prime.hdr_unused","Unused",base.HEX)
-local HT           = ProtoField.uint8("prime.ht","HT",base.HEX,PrimeHT)
-local HDR_RESERVED = ProtoField.uint8("prime.hdr_reserved","Reserved",base.HEX)
-local HDR_DO       = ProtoField.uint8("prime.hdr_do","DO",base.HEX,DOType)
-local HDR_LEVEL    = ProtoField.uint8("prime.hdr_level","LEVEL",base.HEX)
+local HDR_UNUSED   = ProtoField.uint8("prime.hdr_unused","Unused",base.DEC)
+local HT           = ProtoField.uint8("prime.ht","HT",base.DEC,PrimeHT)
+local HDR_RESERVED = ProtoField.uint8("prime.hdr_reserved","Reserved",base.DEC)
+local HDR_DO       = ProtoField.uint8("prime.hdr_do","DO",base.DEC,DOType)
+local HDR_LEVEL    = ProtoField.uint8("prime.hdr_level","LEVEL",base.DEC)
 local HDR_HCS      = ProtoField.uint8("prime.hdr_hcs","HCS",base.HEX)
 
 local ControlData  = ProtoField.bytes("prime.data","Control Data",base.NONE)
@@ -45,21 +45,21 @@ local CRC          = ProtoField.uint32("prime.crc","CRC",base.HEX)
 
 -- PKT fields
 local PKT          = ProtoField.bytes("prime.pkt","Packet Header")
-local PKT_RESERVED = ProtoField.uint8("prime.pkt_reserved","Reserved",base.HEX)
-local PKT_NAD      = ProtoField.uint8("prime.pkt_nad","NAD",base.HEX)
-local PKT_PRIO     = ProtoField.uint8("prime.pkt_prio","PRIO",base.HEX)
-local PKT_C        = ProtoField.uint8("prime.pkt_c","C",base.HEX)
-local PKT_LCID     = ProtoField.uint16("prime.pkt_lcid","LCID",base.HEX)
-local PKT_CTYPE    = ProtoField.uint16("prime.pkt_ctype","CTYPE",base.HEX)
-local PKT_SID      = ProtoField.uint8("prime.pkt_sid","SID",base.HEX)
-local PKT_LNID     = ProtoField.uint16("prime.pkt_lnid","LNID",base.HEX)
-local PKT_SPAD     = ProtoField.uint8("prime.pkt_spad","SPAD",base.HEX)
-local PKT_LEN      = ProtoField.uint16("prime.pkt_len","LEN",base.HEX)
+local PKT_RESERVED = ProtoField.uint8("prime.pkt_reserved","Reserved",base.DEC)
+local PKT_NAD      = ProtoField.uint8("prime.pkt_nad","NAD",base.DEC)
+local PKT_PRIO     = ProtoField.uint8("prime.pkt_prio","PRIO",base.DEC)
+local PKT_C        = ProtoField.uint8("prime.pkt_c","C",base.DEC)
+local PKT_LCID     = ProtoField.uint16("prime.pkt_lcid","LCID",base.DEC)
+local PKT_CTYPE    = ProtoField.uint16("prime.pkt_ctype","CTYPE",base.DEC)
+local PKT_SID      = ProtoField.uint8("prime.pkt_sid","SID",base.DEC)
+local PKT_LNID     = ProtoField.uint16("prime.pkt_lnid","LNID",base.DEC)
+local PKT_SPAD     = ProtoField.uint8("prime.pkt_spad","SPAD",base.DEC)
+local PKT_LEN      = ProtoField.uint16("prime.pkt_len","LEN",base.DEC)
 -- PKT fields (v1.4 specific)
-local PKT_RM       = ProtoField.uint8("prime.pkt_rm","RM",base.HEX)
-local PKT_TREF     = ProtoField.uint8("prime.pkt_tref","TREF",base.HEX)
-local PKT_ARQ      = ProtoField.uint8("prime.pkt_arq","ARQ",base.HEX)
-local PKT_PSH      = ProtoField.uint8("prime.pkt_psh","PSH",base.HEX)
+local PKT_RM       = ProtoField.uint8("prime.pkt_rm","RM",base.DEC)
+local PKT_TREF     = ProtoField.uint8("prime.pkt_tref","TREF",base.DEC)
+local PKT_ARQ      = ProtoField.uint8("prime.pkt_arq","ARQ",base.DEC)
+local PKT_PSH      = ProtoField.uint8("prime.pkt_psh","PSH",base.DEC)
 
 -- ARQ subheader fields
 local ARQ_HDR      = ProtoField.bytes("prime.arq","ARQ Subheader")
@@ -86,40 +86,40 @@ local SAR_CRC      = ProtoField.uint32("prime.sar_crc","SAR CRC",base.HEX)
 
 -- PNH (PNPDU) fields
 local PNH          = ProtoField.bytes("prime.pnh","PNPDU Header")
-local PNH_RESERVED = ProtoField.uint8("prime.pnh_reserved","Reserved",base.HEX)
-local PNH_VER      = ProtoField.uint8("prime.pnh_ver","PNH_VER",base.HEX)
-local PNH_CAP_R    = ProtoField.uint8("prime.pnh_cap_r","CAP_R",base.HEX)
-local PNH_CAP_BC   = ProtoField.uint8("prime.pnh_cap_bc","CAP_BC",base.HEX)
+local PNH_RESERVED = ProtoField.uint8("prime.pnh_reserved","Reserved",base.DEC)
+local PNH_VER      = ProtoField.uint8("prime.pnh_ver","PNH_VER",base.DEC)
+local PNH_CAP_R    = ProtoField.uint8("prime.pnh_cap_r","CAP_R",base.DEC)
+local PNH_CAP_BC   = ProtoField.uint8("prime.pnh_cap_bc","CAP_BC",base.DEC)
 local MAC          = ProtoField.string("prime.mac","MAC")
 local SNA          = ProtoField.string("prime.sna","SNA")
 local PNA          = ProtoField.string("prime.pna","PNA")
 
 -- BCN (Beacon PDU) fields
 local BCN          = ProtoField.bytes("prime.bcn","Beacon PDU")
-local BCN_RESERVED = ProtoField.uint8("prime.bcn_reserved","Reserved",base.HEX)
-local BCN_CSMA     = ProtoField.uint8("prime.bcn_csma","CSMA",base.HEX)
-local BCN_POS      = ProtoField.uint8("prime.bcn_pos","POS",base.HEX)
-local BCN_FRA_LEN  = ProtoField.uint8("prime.bcn_fra_len","FRA_LEN",base.HEX)
-local BCN_PHYBC    = ProtoField.uint8("prime.bcn_phybc","PHYBC",base.HEX)
-local BCN_MACBC    = ProtoField.uint8("prime.bcn_macbc","MACBC",base.HEX)
-local BCN_COST     = ProtoField.uint8("prime.bcn_cost","COST",base.HEX)
-local BCN_QLTY     = ProtoField.uint8("prime.bcn_qlty","QLTY",base.HEX)
-local BCN_CNT      = ProtoField.uint8("prime.bcn_cnt","CNT",base.HEX)
-local BCN_SLT      = ProtoField.uint8("prime.bcn_slt","SLT",base.HEX)
-local BCN_CFP      = ProtoField.uint16("prime.bcn_cfp","CFP",base.HEX)
-local BCN_UPCOST   = ProtoField.uint8("prime.bcn_upcost","UPCOST",base.HEX)
-local BCN_DNCOST   = ProtoField.uint8("prime.bcn_dncost","DNCOST",base.HEX)
-local BCN_FRQ      = ProtoField.uint8("prime.bcn_frq","FRQ",base.HEX)
-local BCN_SEQ      = ProtoField.uint8("prime.bcn_seq","SEQ",base.HEX)
+local BCN_RESERVED = ProtoField.uint8("prime.bcn_reserved","Reserved",base.DEC)
+local BCN_CSMA     = ProtoField.uint8("prime.bcn_csma","CSMA",base.DEC)
+local BCN_POS      = ProtoField.uint8("prime.bcn_pos","POS",base.DEC)
+local BCN_FRA_LEN  = ProtoField.uint8("prime.bcn_fra_len","FRA_LEN",base.DEC)
+local BCN_PHYBC    = ProtoField.uint8("prime.bcn_phybc","PHYBC",base.DEC)
+local BCN_MACBC    = ProtoField.uint8("prime.bcn_macbc","MACBC",base.DEC)
+local BCN_COST     = ProtoField.uint8("prime.bcn_cost","COST",base.DEC)
+local BCN_QLTY     = ProtoField.uint8("prime.bcn_qlty","QLTY",base.DEC)
+local BCN_CNT      = ProtoField.uint8("prime.bcn_cnt","CNT",base.DEC)
+local BCN_SLT      = ProtoField.uint8("prime.bcn_slt","SLT",base.DEC)
+local BCN_CFP      = ProtoField.uint16("prime.bcn_cfp","CFP",base.DEC)
+local BCN_UPCOST   = ProtoField.uint8("prime.bcn_upcost","UPCOST",base.DEC)
+local BCN_DNCOST   = ProtoField.uint8("prime.bcn_dncost","DNCOST",base.DEC)
+local BCN_FRQ      = ProtoField.uint8("prime.bcn_frq","FRQ",base.DEC)
+local BCN_SEQ      = ProtoField.uint8("prime.bcn_seq","SEQ",base.DEC)
 
 -- PRO fields
 local PRO_HDR     = ProtoField.bytes("prime.pro","PRO Control Data")
-local PRO_N       = ProtoField.uint8("prime.pro_n","N",base.HEX)
-local PRO_RQ      = ProtoField.uint8("prime.pro_rq","RQ",base.HEX)
-local PRO_TIME    = ProtoField.uint8("prime.pro_time","TIME",base.HEX)
-local PRO_FRQ     = ProtoField.uint8("prime.pro_frq","FRQ",base.HEX)
-local PRO_SEQ     = ProtoField.uint8("prime.pro_seq","SEQ",base.HEX)
-local PRO_NSID    = ProtoField.uint8("prime.pro_nsid","NSID",base.HEX)
+local PRO_N       = ProtoField.uint8("prime.pro_n","N",base.DEC)
+local PRO_RQ      = ProtoField.uint8("prime.pro_rq","RQ",base.DEC)
+local PRO_TIME    = ProtoField.uint8("prime.pro_time","TIME",base.DEC)
+local PRO_FRQ     = ProtoField.uint8("prime.pro_frq","FRQ",base.DEC)
+local PRO_SEQ     = ProtoField.uint8("prime.pro_seq","SEQ",base.DEC)
+local PRO_NSID    = ProtoField.uint8("prime.pro_nsid","NSID",base.DEC)
 local PRO_BCN_POS = ProtoField.uint8("prime.pro_bcn_pos","BCN_POS",base.DEC)
 local PRO_ACK_F   = ProtoField.uint8("prime.pro_ack","ACK",base.DEC)
 local PRO_DS      = ProtoField.uint8("prime.pro_ds","DS",base.DEC)
@@ -146,10 +146,10 @@ local CON_LCID   = ProtoField.uint16("prime.con_lcid","CON.LCID",base.DEC)
 local CON_EUI48  = ProtoField.string("prime.con_eui48","EUI-48")
 local CON_DCLCID = ProtoField.uint16("prime.con_dclcid","DCLCID",base.DEC)
 local CON_DCNAD  = ProtoField.uint8("prime.con_dcnad","DCNAD",base.DEC)
-local CON_DCLNID = ProtoField.uint16("prime.con_dclnid","DCLNID",base.HEX)
-local CON_DSSID  = ProtoField.uint8("prime.con_dssid","DSSID",base.HEX)
-local CON_DCSID  = ProtoField.uint8("prime.con_dcsid","DCSID",base.HEX)
-local CON_TYPE   = ProtoField.uint8("prime.con_type","TYPE",base.HEX)
+local CON_DCLNID = ProtoField.uint16("prime.con_dclnid","DCLNID",base.DEC)
+local CON_DSSID  = ProtoField.uint8("prime.con_dssid","DSSID",base.DEC)
+local CON_DCSID  = ProtoField.uint8("prime.con_dcsid","DCSID",base.DEC)
+local CON_TYPE   = ProtoField.uint8("prime.con_type","TYPE",base.DEC)
 local CON_DLEN   = ProtoField.uint8("prime.con_dlen","DLEN",base.DEC)
 local CON_DATA   = ProtoField.bytes("prime.con_data","DATA")
 
@@ -184,14 +184,14 @@ local REG_WK      = ProtoField.bytes("prime.reg_wk","WK")
 local ALV           = ProtoField.bytes("prime.alv","ALV Control Data",base.NONE)
 local ALV_RXCNT     = ProtoField.uint8("prime.alv_rxcnt","RXCNT",base.DEC)
 local ALV_TXCNT     = ProtoField.uint8("prime.alv_txcnt","TXCNT",base.DEC)
-local ALV_SSID      = ProtoField.uint8("prime.alv_ssid","SSID",base.HEX)
+local ALV_SSID      = ProtoField.uint8("prime.alv_ssid","SSID",base.DEC)
 local ALV_TIME      = ProtoField.uint8("prime.alv_time","TIME",base.DEC)
 -- ALV fields (v1.4)
 local ALV_R         = ProtoField.uint8("prime.alv_r","R",base.DEC)
 local ALV_RTL       = ProtoField.uint8("prime.alv_rtl","RTL",base.DEC)
 local ALV_MIN_LEVEL = ProtoField.uint8("prime.alv_min_level","MIN_LEVEL",base.DEC)
 local ALV_TX_SEQ    = ProtoField.uint8("prime.alv_tx_seq","TX_SEQ",base.DEC)
-local ALV_RX_ENC    = ProtoField.uint8("prime.alv_rx_enc","RX_ENC",base.HEX)
+local ALV_RX_ENC    = ProtoField.uint8("prime.alv_rx_enc","RX_ENC",base.DEC)
 local ALV_RX_SNR    = ProtoField.uint8("prime.alv_rx_snr","RX_SNR",base.DEC)
 local ALV_RX_POW    = ProtoField.uint8("prime.alv_rx_pow","RX_POW",base.DEC)
 local ALV_V_LD      = ProtoField.uint8("prime.alv_v_ld","V_LD",base.DEC)
@@ -204,6 +204,21 @@ local BSI_HDR = ProtoField.bytes("prime.bsi","BSI Control Data")
 local BSI_FRQ = ProtoField.uint8("prime.bsi_frq","FRQ",base.DEC)
 local BSI_SLT = ProtoField.uint8("prime.bsi_slt","SLT",base.DEC)
 local BSI_SEQ = ProtoField.uint8("prime.bsi_seq","SEQ",base.DEC)
+
+local FRAType = {
+	[0] = "BCN_IND",
+	[1] = "CFP_IND",
+}
+
+-- FRA fields
+local FRA_HDR     = ProtoField.bytes("prime.fra","FRA Control Data")
+local FRA_TYP     = ProtoField.uint8("prime.fra_typ","TYP",base.DEC,FRAType)
+local FRA_LEN     = ProtoField.uint8("prime.fra_len","LEN",base.DEC)
+local FRA_PHYBC   = ProtoField.uint8("prime.fra_phybc","PHYBC",base.DEC)
+local FRA_CFP     = ProtoField.uint16("prime.fra_cfp","CFP",base.DEC)
+local FRA_SEQ     = ProtoField.uint8("prime.fra_seq","SEQ",base.DEC)
+local FRA_BCN     = ProtoField.uint8("prime.fra_bcn","BCN",base.DEC)
+local FRA_RESERVED = ProtoField.uint8("prime.fra_reserved","Reserved",base.DEC)
 
 -- PRM fields
 local PRM_HDR = ProtoField.bytes("prime.prm","PRM Control Data")
@@ -244,6 +259,8 @@ prime_proto.fields = {
 	ALV_V_LD, ALV_REP_D, ALV_V_LU, ALV_REP_U,
 	-- BSI
 	BSI_HDR, BSI_FRQ, BSI_SLT, BSI_SEQ,
+	-- FRA
+	FRA_HDR, FRA_TYP, FRA_LEN, FRA_PHYBC, FRA_CFP, FRA_SEQ, FRA_BCN, FRA_RESERVED,
 	-- PRM
 	PRM_HDR, PRM_R, PRM_N, PRM_SNR}
 
@@ -507,7 +524,7 @@ local function dissect_reg(buffer, pinfo, t_prime, payload_offset, payload_len, 
 		tREG = "UNR_B"
 	end
 
-	pinfo.cols['info'] = "REG " .. (tREG or "UNK") .. " LNID=" .. string.format("0x%04x", lnid) .. " EUI48=" .. eui48 .. " TIME=" .. time .. " SPC=" .. spc
+	pinfo.cols['info'] = "REG " .. (tREG or "UNK") .. " LNID=" .. lnid .. " EUI48=" .. eui48 .. " TIME=" .. time .. " SPC=" .. spc
 end
 
 local function dissect_con(buffer, pinfo, t_prime, payload_offset, payload_len, direction, lnid)
@@ -589,7 +606,7 @@ local function dissect_con(buffer, pinfo, t_prime, payload_offset, payload_len, 
 		end
 	end
 
-	pinfo.cols['info'] = "CON " .. (tCON or "UNK") .. " LNID=" .. string.format("0x%04x", lnid) .. " LCID=" .. con_lcid
+	pinfo.cols['info'] = "CON " .. (tCON or "UNK") .. " LNID=" .. lnid .. " LCID=" .. con_lcid
 end
 
 local function dissect_pro(buffer, pinfo, t_prime, payload_offset, payload_len, ver, direction, lnid)
@@ -652,7 +669,7 @@ local function dissect_pro(buffer, pinfo, t_prime, payload_offset, payload_len, 
 			end
 		end
 
-		pinfo.cols['info'] = "PRO " .. (tPRO or "UNK") .. " LNID=" .. string.format("0x%04x", lnid) .. " N=" .. n .. " RQ=" .. rq .. " TIME=" .. time .. " NSID=" .. string.format("0x%02x", nsid) .. info
+		pinfo.cols['info'] = "PRO " .. (tPRO or "UNK") .. " LNID=" .. lnid .. " N=" .. n .. " RQ=" .. rq .. " TIME=" .. time .. " NSID=" .. nsid .. info
 	else
 		-- v1.4: Byte0: N(1),BCN_POS(7) · Byte1: NSID(8)
 		--        Byte2: RQ(3),TIME(3),SEQ[4..3](2) · Byte3: SEQ[2..0](3),FRQ(3),MOD(2)
@@ -714,7 +731,7 @@ local function dissect_pro(buffer, pinfo, t_prime, payload_offset, payload_len, 
 			info = " PNA=" .. pna .. " COST=" .. cost
 		end
 
-		pinfo.cols['info'] = "PRO " .. (tPRO or "UNK") .. " LNID=" .. string.format("0x%04x", lnid) .. " N=" .. n .. " RQ=" .. rq .. " TIME=" .. time .. " NSID=" .. string.format("0x%02x", nsid) .. info
+		pinfo.cols['info'] = "PRO " .. (tPRO or "UNK") .. " LNID=" .. lnid .. " N=" .. n .. " RQ=" .. rq .. " TIME=" .. time .. " NSID=" .. nsid .. info
 	end
 end
 
@@ -735,7 +752,50 @@ local function dissect_bsi(buffer, pinfo, t_prime, payload_offset, payload_len, 
 	t_bsi:add(BSI_SLT, buffer(payload_offset+1, 1), slt)
 	t_bsi:add(BSI_SEQ, buffer(payload_offset+1, 1), seq)
 	local tBSI = (direction == 0) and "ACK" or "IND"
-	pinfo.cols['info'] = "BSI " .. tBSI .. " LNID=" .. string.format("0x%04x", lnid) .. " FRQ=" .. frq .. " SLT=" .. slt .. " SEQ=" .. seq
+	pinfo.cols['info'] = "BSI " .. tBSI .. " LNID=" .. lnid .. " FRQ=" .. frq .. " SLT=" .. slt .. " SEQ=" .. seq
+end
+
+local function dissect_fra(buffer, pinfo, t_prime, payload_offset, payload_len, ver, lnid)
+	if payload_len < 3 then
+		pinfo.cols['info'] = "FRA (truncated)"
+		if payload_len > 0 then
+			t_prime:add(ControlData, buffer(payload_offset, payload_len))
+		end
+		return
+	end
+
+	local t_fra = t_prime:add(FRA_HDR, buffer(payload_offset, 3))
+	if ver == 0 then
+		-- v1.3.6: TYP(2), Reserved(4), CFP(10), SEQ(5), BCN(3)
+		local fra_typ = extract_bits(buffer(payload_offset, 2), 0, 2)
+		local reserved = extract_bits(buffer(payload_offset, 2), 2, 4)
+		local fra_cfp = extract_bits(buffer(payload_offset, 2), 6, 10)
+		local fra_seq = extract_bits(buffer(payload_offset+2, 1), 0, 5)
+		local fra_bcn = extract_bits(buffer(payload_offset+2, 1), 5, 3)
+		t_fra:add(FRA_TYP, buffer(payload_offset, 1), fra_typ)
+		t_fra:add(FRA_RESERVED, buffer(payload_offset, 1), reserved)
+		t_fra:add(FRA_CFP, buffer(payload_offset, 2), fra_cfp)
+		t_fra:add(FRA_SEQ, buffer(payload_offset+2, 1), fra_seq)
+		t_fra:add(FRA_BCN, buffer(payload_offset+2, 1), fra_bcn)
+		pinfo.cols['info'] = "FRA " .. (FRAType[fra_typ] or "UNK") .. " LNID=" .. lnid .. " CFP=" .. fra_cfp .. " SEQ=" .. fra_seq .. " BCN=" .. fra_bcn
+	else
+		-- v1.4: Reserved(2=0b10), LEN(2), PHYBC(1), Reserved(1), CFP(10), SEQ(5), Reserved(3)
+		local reserved_prefix = extract_bits(buffer(payload_offset, 1), 0, 2)
+		local fra_len = extract_bits(buffer(payload_offset, 1), 2, 2)
+		local fra_phybc = extract_bits(buffer(payload_offset, 1), 4, 1)
+		local reserved_mid = extract_bits(buffer(payload_offset, 2), 5, 1)
+		local fra_cfp = extract_bits(buffer(payload_offset, 2), 6, 10)
+		local fra_seq = extract_bits(buffer(payload_offset+2, 1), 0, 5)
+		local reserved_tail = extract_bits(buffer(payload_offset+2, 1), 5, 3)
+		t_fra:add(FRA_RESERVED, buffer(payload_offset, 1), reserved_prefix)
+		t_fra:add(FRA_LEN, buffer(payload_offset, 1), fra_len)
+		t_fra:add(FRA_PHYBC, buffer(payload_offset, 1), fra_phybc)
+		t_fra:add(FRA_RESERVED, buffer(payload_offset, 2), reserved_mid)
+		t_fra:add(FRA_CFP, buffer(payload_offset, 2), fra_cfp)
+		t_fra:add(FRA_SEQ, buffer(payload_offset+2, 1), fra_seq)
+		t_fra:add(FRA_RESERVED, buffer(payload_offset+2, 1), reserved_tail)
+		pinfo.cols['info'] = "FRA LNID=" .. lnid .. " LEN=" .. fra_len .. " PHYBC=" .. fra_phybc .. " CFP=" .. fra_cfp .. " SEQ=" .. fra_seq
+	end
 end
 
 local function dissect_alv(buffer, pinfo, t_prime, payload_offset, payload_len, ver, direction, lnid)
@@ -761,7 +821,7 @@ local function dissect_alv(buffer, pinfo, t_prime, payload_offset, payload_len, 
 		t_alv:add(ALV_TIME,  buffer(payload_offset+1, 1), time)
 		t_alv:add(ALV_SSID,  buffer(payload_offset+2, 1), ssid)
 		local tALV = (direction == 0) and "ALV_S" or "ALV_B"
-		pinfo.cols['info'] = tALV .. " LNID=" .. lnid .. " RXCNT=" .. rxcnt .. " TXCNT=" .. txcnt .. " TIME=" .. time .. " SSID=" .. string.format("0x%02x", ssid)
+		pinfo.cols['info'] = tALV .. " LNID=" .. lnid .. " RXCNT=" .. rxcnt .. " TXCNT=" .. txcnt .. " TIME=" .. time .. " SSID=" .. ssid
 	else
 		-- PRIME v1.4 ALV
 		-- ALV.R distinguishes request/response (R=1) from acknowledge (R=0)
@@ -857,7 +917,7 @@ local function dissect_prm(buffer, pinfo, t_prime, payload_offset, payload_len, 
 	elseif prm_r == 1 and prm_n == 1 then
 		tPRM = "REJ"
 	end
-	pinfo.cols['info'] = "PRM " .. (tPRM or "UNK") .. " LNID=" .. string.format("0x%04x", lnid) .. " SNR=" .. prm_snr
+	pinfo.cols['info'] = "PRM " .. (tPRM or "UNK") .. " LNID=" .. lnid .. " SNR=" .. prm_snr
 end
 
 local function dissect_arq_subheader(buffer, t_prime, start_offset)
@@ -1077,6 +1137,8 @@ local function dissect_general_pdu(buffer, pinfo, t_prime)
 		dissect_pro(buffer, pinfo, t_prime, payload_offset, payload_len, ver, direction, lnid)
 	elseif lcid_or_ctype == 4 then
 		dissect_bsi(buffer, pinfo, t_prime, payload_offset, payload_len, direction, lnid)
+	elseif lcid_or_ctype == 5 then
+		dissect_fra(buffer, pinfo, t_prime, payload_offset, payload_len, ver, lnid)
 	elseif lcid_or_ctype == 7 then
 		dissect_alv(buffer, pinfo, t_prime, payload_offset, payload_len, ver, direction, lnid)
 	elseif lcid_or_ctype == 9 then
